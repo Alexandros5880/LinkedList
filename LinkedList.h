@@ -2,7 +2,7 @@
 template <class T>
 class Node {
     public:
-        Node(T*);
+        Node(T &);
         void setNext(Node<T>*);
         void setPrevius(Node<T>*);
         Node<T> * getNext();
@@ -21,8 +21,9 @@ template <class T>
 class LinkedList {
     public:
         LinkedList();
-        void append(T *data); // In front
+        void append(T &data); // In front
         void extend(T * data); // To the end
+        void print();
         T get(unsigned long index);
         bool del(long index);
         void clear();
@@ -38,11 +39,10 @@ class LinkedList {
 
 
 
-
 // Class Node
 template <class T>
-Node<T>::Node(T * data) {
-    this->data = data;
+Node<T>::Node(T &data) {
+    this->data = &data;
 }
 
 template <class T>
@@ -67,7 +67,7 @@ Node<T> * Node<T>::getPrevius() {
 
 template <class T>
 T Node<T>::getData() {
-    return *this->data;
+    return * this->data;
 }
 
 
@@ -80,9 +80,9 @@ LinkedList<T>::LinkedList() {
 }
 
 template <class T> // At the end
-void LinkedList<T>::append(T * data) {
+void LinkedList<T>::append(T &data) {
     Node<T> * node = new Node<T>(data);
-    if (this->getSize() > 0) {
+    if (this->counter > 0) {
         this->tail->setNext(node);
         node->setPrevius(this->tail);
     } else  {
@@ -92,7 +92,7 @@ void LinkedList<T>::append(T * data) {
     this->counter++;
 }
 
-
+/*
 template <class T> // To the front
 void LinkedList<T>::extend(T * data) {
     Node<T>* node = new Node<T>(data);
@@ -106,9 +106,20 @@ void LinkedList<T>::extend(T * data) {
     }
     this->counter++;
 }
+*/
 
+template <class T> // At the end
+void LinkedList<T>::print() {
+    // Print my List
+    Node<T> * currentNode = this->head;
+    cout << currentNode->getData() << endl;
+    for (long i = 0; i < this->counter; i++) {
+        //cout << currentNode->getData() << endl;
+        //currentNode = currentNode->getNext();
+    }
+}
 
-
+/*
 template <class T>
 T LinkedList<T>::get(unsigned long index) {
     Node<T> * currentNode = this->head;
@@ -121,11 +132,11 @@ T LinkedList<T>::get(unsigned long index) {
         if (i == index) {
             return currentNode->getData();
         }
-        currentNode = nextNode;
+        currentNode = previusNode;
     }
     return '\0';
 }
-
+*/
 /*
 template <class T>
 bool LinkedList<T>::del(long index) {
