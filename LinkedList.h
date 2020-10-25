@@ -1,215 +1,167 @@
-// Class Node
-template <class T>
-class Node {
-    public:
-        Node(T &);
-        void setNext(Node<T>*);
-        void setPrevius(Node<T>*);
-        Node<T> * getNext();
-        Node<T> * getPrevius();
-        T* getValue();
-        T getData();
-    private:
-        T * data = NULL;
-        Node * next = NULL;
-        Node * previus = NULL;
-};
+#include <iostream>
+using namespace std;
 
 
-// Class Linked List
 template <class T>
-class LinkedList {
+struct node {
+    T data;
+    node *next;
+    node *previus;
+};	
+
+
+template <class T>
+class list {
     public:
-        LinkedList();
-        void append(T &data); // In front
-        void extend(T * data); // To the end
-        void print();
-        T get(unsigned long index);
-        bool del(long index);
-        void clear();
-        long getSize();
-        void reverse();
-        void shorting();
+        list();
+        void insert(T value);
+        void insert_start(int value);
+        void insert_position(int pos, int value);
+        void display();
+        void delete_first();
+        void delete_last();
+        void delete_position(int pos);
+        T get(int pos);
     private:
-        Node<T> * head = NULL;
-        Node<T> * tail = NULL;
-        unsigned long counter;
+        node<T> *head, *tail;
+        long size = 0;
 };
 
 
 
 
-// Class Node
-template <class T>
-Node<T>::Node(T &data) {
-    this->data = &data;
-}
 
 template <class T>
-void Node<T>::setNext(Node<T> * node) {
-    this->next = node;
-}
-
-template <class T>
-void Node<T>::setPrevius(Node<T> * node) {
-    this->previus = node;
-}
-
-template <class T>
-Node<T> * Node<T>::getNext() {
-    return this->next;
-}
-
-template <class T>
-Node<T> * Node<T>::getPrevius() {
-    return this->previus;
-}
-
-template <class T>
-T Node<T>::getData() {
-    return * this->data;
+list<T>::list() {
+    this->head = NULL;
+    this->tail = NULL;
 }
 
 
-
-
-// Class Linked List
 template <class T>
-LinkedList<T>::LinkedList() {
-    this->counter = 0;
-}
-
-template <class T> // At the end
-void LinkedList<T>::append(T &data) {
-    Node<T> * node = new Node<T>(data);
-    if (this->counter > 0) {
-        this->tail->setNext(node);
-        node->setPrevius(this->tail);
-    } else  {
-        this->head = node;
+void list<T>::insert(T value) {
+    node<T> *temp = new node<T>;
+    temp->data = value;
+    temp->next = NULL;
+    temp->previus = NULL;
+    if(head == NULL) {
+        this->head = temp;
+        this->tail = temp;
+        temp = NULL;
+    } else {	
+        this->tail->next = temp;
+        temp->previus = this->tail;
+        tail = temp;
     }
-    this->tail = node;
-    this->counter++;
+    this->size++;
 }
 
-/*
-template <class T> // To the front
-void LinkedList<T>::extend(T * data) {
-    Node<T>* node = new Node<T>(data);
-    if ( this->getSize() > 0 ) {
-        node->setNext(this->head);
-        this->head->setPrevius(node);
-        this->head = node;
-    } else {
-        this->head = node;
-        this->tail = node;
-    }
-    this->counter++;
-}
-*/
 
-template <class T> // At the end
-void LinkedList<T>::print() {
-    // Print my List
-    Node<T> * currentNode = this->head;
-    cout << currentNode->getData() << endl;
-    for (long i = 0; i < this->counter; i++) {
-        //cout << currentNode->getData() << endl;
-        //currentNode = currentNode->getNext();
-    }
-}
-
-/*
 template <class T>
-T LinkedList<T>::get(unsigned long index) {
-    Node<T> * currentNode = this->head;
-    Node<T> * previusNode = NULL;
-    Node<T> * nextNode = NULL;
-    for (unsigned long i = 0; i < this->counter; i++) {
-        nextNode = currentNode->getNext();
-        previusNode = currentNode->getPrevius();
-        cout << currentNode->getData() << endl;
-        if (i == index) {
-            return currentNode->getData();
+void list<T>::insert_start(int value) {
+    node<T> *temp = new node<T>;
+    temp->data = value;
+    temp->next = this->head;
+    this->head->previus = temp;
+    head = temp;
+    this->size++;
+}
+
+
+template <class T>
+void list<T>::insert_position(int pos, int value) {
+    node<T> *temp = new node<T>;
+    temp->data = value;
+    node<T> *cur = new node<T>;
+
+    if ( pos < (this->size/2) ) { // It's close to start
+        cur = this->head;
+        for ( int i = 1; i <= pos; i++ ) {
+            cur = cur->next;
         }
-        currentNode = previusNode;
-    }
-    return '\0';
-}
-*/
-/*
-template <class T>
-bool LinkedList<T>::del(long index) {
-    bool deleted = false;
-    Node<T> * current = head;
-    Node<T> * before = current->before;
-    Node<T> * after = current->after;
-    for ( int i = 0; i < counter; i++ ) {
-        if (i == index) {
-            if (i == 0) { // If is the first element
-                after->before == NULL;
-                head = after;
-            } else if (i == counter-1) { // If is the last element
-                before->after = NULL;
-                tail = before;
-            } else {
-                before->after = after;
-                after->before = before;
-            }
-            delete current;
-            delete before;
-            delete after;
-            deleted = true;
-        } else {
-            current = current->after;
-            before = current->before;
-            after = current->after;
+    } else { // It's close to the end
+        cur = this->tail;
+        for ( int i = (this->size-1); i > pos; i-- ) {
+            cur = cur->previus;
         }
     }
-    return deleted;
+    cur->previus->next = temp;
+    temp->previus = cur->previus;
+    temp->next = cur;
+    cur->previus = temp;
+    this->size++;
 }
 
+
 template <class T>
-void LinkedList<T>::clear() {
-    head->setBefore(NULL);
-    head->setAfter(NULL);
-    tail->setBefore(NULL);
-    tail->setAfter(NULL);
-    counter = 0;
-}
-*/
-template <class T>
-long LinkedList<T>::getSize() {
-    return counter;
-}
-/*
-template <class T>
-void LinkedList<T>::reverse() {
-    LinkedList<T> * list = new LinkedList();
-    Node<T> * current = tail;
-    for ( int i = counter; i > 0; i-- ) {
-        list->extend(current);
-        current = current->before;
+void list<T>::display() {
+    node<T> *temp = new node<T>;
+    temp = this->head;
+    while ( temp != NULL ) {
+        cout << temp->data << "\t";
+        temp = temp->next;
     }
-    this = list;
+    cout << endl;
 }
 
+
+
 template <class T>
-void LinkedList<T>::shorting() {
-    Node<T> * current = head;
-    Node<T> * before = current->before;
-    Node<T> * after = current->after;
-    T * data;
-    for ( int i = 0; i < counter; i++ ) {
-        if (current->data < after->data) {
-            data = current->data;
-            current->data = after->data;
-            after->data = data;
-            delete data;
+void list<T>::delete_first() {
+    node<T> *temp = new node<T>;
+    temp = this->head;
+    this->head = temp->next;
+    this->head->previus = NULL;
+    delete temp;
+    this->size--;
+}
+
+
+template <class T>
+void list<T>::delete_last() {
+    node<T> *temp = new node<T>;
+    temp = this->tail;
+    this->tail = temp->previus;
+    this->tail->next = NULL;
+    delete temp;
+    this->size--;
+}
+
+
+
+template <class T>
+void list<T>::delete_position(int pos) {
+    node<T> *current = new node<T>;
+    if ( pos < (this->size/2) ) { // It's close to start
+        current = this->head;
+        for ( int i = 0; i < pos; i++) {
+            current = current->next;
         }
-        current = current->after;
-        before = current->before;
-        after = current->after;
+    } else { // It's close to the end
+        current = this->tail;
+        for ( int i = this->size-1; i > pos; i--) {
+            current = current->previus;
+        }
     }
+    current->previus->next = current->next;
+    current->next->previus = current->previus;
+    this->size--;
 }
-*/
+
+
+template <class T>
+T list<T>::get(int pos) {
+    node<T> *current = new node<T>;
+    if ( pos < (this->size/2) ) { // It's close to start
+        current = this->head;
+        for ( int i = 0; i < pos; i++) {
+            current = current->next;
+        }
+    } else { // It's close to the end
+        current = this->tail;
+        for ( int i = this->size-1; i > pos; i--) {
+            current = current->previus;
+        }
+    }
+    return current->data;
+}
