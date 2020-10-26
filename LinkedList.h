@@ -18,6 +18,7 @@ class list {
         void insert_start(int value);
         void insert_position(int pos, int value);
         void display();
+        long getSize();
         void delete_first();
         void delete_last();
         void delete_position(int pos);
@@ -104,6 +105,11 @@ void list<T>::display() {
     cout << endl;
 }
 
+
+template <class T>
+long list<T>::getSize() {
+    return this->size;
+}
 
 
 template <class T>
